@@ -1,6 +1,8 @@
 import pygame
 import random
 import my_classes
+import goodblock
+import badblock
  
 # Define some colors
 BLACK = (  0,   0,   0)
@@ -77,7 +79,7 @@ all_sprites_list = pygame.sprite.Group()
  
 for i in range(50):
     # This represents a block
-    block = my_classes.Block("goodcoin.png",WHITE)
+    block = goodblock.Goodblock("goodcoin.png",WHITE)
  
     # Set a random location for the block
     block.rect.x = random.randrange(screen_width)
@@ -89,7 +91,7 @@ for i in range(50):
 
 for i in range(50):
     # This represents a block
-    block = my_classes.Block("badflame.png",WHITE)
+    block = badblock.BadBlock("badflame.png",WHITE)
  
     # Set a random location for the block
     block.rect.x = random.randrange(screen_width)
