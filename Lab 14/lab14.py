@@ -11,10 +11,10 @@ GREEN = (  0, 255,   0)
 class Block(pygame.sprite.Sprite):
     """
     This class represents the ball.
-    It derives from the "Sprite" class in Pygame.
+    It derives from the "Sprite" class in Pygame
     """
  
-    def __init__(self, filename):
+    def __init__(self, filename,colorkey):
            # Call the parent class (Sprite) constructor
         super().__init__() 
     
@@ -24,7 +24,7 @@ class Block(pygame.sprite.Sprite):
     
            # Set background color to be transparent. Adjust to WHITE if your
            # background is WHITE.
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(colorkey)
     
            # Fetch the rectangle object that has the dimensions of the image
            # image.
@@ -66,6 +66,18 @@ class Player(pygame.sprite.Sprite):
         """ Find a new position for the player"""
         self.rect.x += self.change_x
         self.rect.y += self.change_y
+        if self.rect.y < 0:
+            self.rect.y = 0
+            bump_sound.play()
+        if self.rect.y > 385:
+            self.rect.y = 385
+            bump_sound.play()
+        if self.rect.x < 0:
+            self.rect.x = 0
+            bump_sound.play()
+        if self.rect.x > 685:
+            self.rect.x = 685
+            bump_sound.play()
         
 # Initialize Pygame
 pygame.init()
@@ -74,7 +86,9 @@ pygame.init()
 screen_width = 700
 screen_height = 400
 screen = pygame.display.set_mode([screen_width, screen_height])
- 
+good_sound = pygame.mixer.Sound("good_block.wav")
+bad_sound = pygame.mixer.Sound("bad_block.wav")
+bump_sound = pygame.mixer.Sound("bump.wav")
 # This is a list of 'sprites.' Each block in the program is
 # added to this list. The list is managed by a class called 'Group.'
 good_block_list = pygame.sprite.Group()
@@ -86,7 +100,7 @@ all_sprites_list = pygame.sprite.Group()
  
 for i in range(50):
     # This represents a block
-    block = Block("goodcoin.png")
+    block = Block("goodcoin.png",WHITE)
  
     # Set a random location for the block
     block.rect.x = random.randrange(screen_width)
@@ -98,7 +112,7 @@ for i in range(50):
 
 for i in range(50):
     # This represents a block
-    block = Block("badflame.png")
+    block = Block("badflame.png",WHITE)
  
     # Set a random location for the block
     block.rect.x = random.randrange(screen_width)
@@ -154,20 +168,22 @@ while not done:
     good_blocks_hit_list = pygame.sprite.spritecollide(player, good_block_list, True)
     bad_blocks_hit_list = pygame.sprite.spritecollide(player, bad_block_list, True)
     
+    # Set Text Font
+    font = pygame.font.SysFont("Calibri",25,True,False)
+    
     # Check the list of collisions.
     for block in good_blocks_hit_list:
+        good_sound.play()
         score += 1
-        print(score)
     all_sprites_list.update()
-    
     for block in bad_blocks_hit_list:
-            score -= 1
-            print(score)
+        bad_sound.play()
+        score -= 1
     all_sprites_list.update()    
-
+    text = font.render("Score: " + str(score),True,BLACK)
     # Draw all the spites
     all_sprites_list.draw(screen)
- 
+    screen.blit(text,[20,20])
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
  
